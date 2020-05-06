@@ -1,2 +1,2 @@
-# jjc
-Jump Jump Climb ! (Jump Action Game on Pygame)
+# Jump Jump Climb !
+Jump Action Game on Pygame
