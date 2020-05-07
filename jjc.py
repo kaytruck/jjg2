@@ -16,6 +16,7 @@ def main():
     p_y = 580
     jump_v = 0
     is_jumping = False
+    is_landing = True
 
     while True:
         for e in pygame.event.get():
@@ -36,11 +37,25 @@ def main():
 
         # 描画
         screen.fill((0, 0, 0))
-        p_polygon = ((p_x, p_y - 20), (p_x - 10, p_y), (p_x + 10, p_y))
-        pygame.draw.polygon(screen, (200, 0, 0), p_polygon, 0)
+        # p_polygon = ((p_x, p_y - 20), (p_x - 10, p_y), (p_x + 10, p_y))
+        # pygame.draw.polygon(screen, (200, 0, 0), p_polygon, 0)
+        player_char = Rect((p_x - 10, p_y), (20, 20))
+        r1 = Rect(700, 550, 50, 70)
+
+        if player_char.colliderect(r1):
+            is_landing = True
+            p_y = r1.top - 20
+            player_char = Rect((p_x - 10, p_y), (20, 20))
+
+        pygame.draw.rect(screen, (200, 0, 0), player_char)
+        pygame.draw.rect(screen, (0, 100, 200), r1)
+
+        if p_y + 20 >= 600:
+            is_landing = True
 
         # 自動的にジャンプする
-        if p_y == 580:
+        if is_landing:
+            is_landing = False
             jump_v = -30
         else:
             jump_v += 2
