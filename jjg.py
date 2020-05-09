@@ -4,9 +4,10 @@ from pygame.locals import QUIT, Rect, KEYDOWN, K_LEFT, K_RIGHT, K_SPACE
 from gamestatus import GameStatus
 
 # ゲーム定数
-MOVE_X_STEP = 10     # 横方向のステップ
+MOVE_X_STEP = 10    # 横方向のステップ
 SCREEN_WIDTH = 800  # 画面の横幅
 SCREEN_HEIGHT = 600 # 画面の高さ
+PLAYER_SIZE = 20    # プレイヤーキャラの大きさ
 
 # ゲーム変数
 p_x = 0
@@ -19,7 +20,7 @@ is_landing = True
 def init():
     global p_x, p_y, jump_v, is_jumping, is_landing
     p_x = 400
-    p_y = 580
+    p_y = SCREEN_HEIGHT - PLAYER_SIZE
     jump_v = 0
     is_jumping = False
     is_landing = True
@@ -43,14 +44,14 @@ def gaming(keycode):
 
     # 描画
     screen.fill((0, 0, 0))
-    player_char = Rect((p_x - 10, p_y), (20, 20))
+    player_char = Rect((p_x - 10, p_y), (PLAYER_SIZE, PLAYER_SIZE))
     r1 = Rect(700, 550, 50, 70)
     r2 = Rect(100, 500, 50, 100) # 終了判定実験用ブロック
 
     if player_char.colliderect(r1):
         is_landing = True
-        p_y = r1.top - 20
-        player_char = Rect((p_x - 10, p_y), (20, 20))
+        p_y = r1.top - PLAYER_SIZE
+        player_char = Rect((p_x - 10, p_y), (PLAYER_SIZE, PLAYER_SIZE))
         
     pygame.draw.rect(screen, (200, 0, 0), player_char)
     pygame.draw.rect(screen, (0, 100, 200), r1)
@@ -59,7 +60,7 @@ def gaming(keycode):
     if player_char.colliderect(r2):
         return GameStatus.GAME_OVER
 
-    if p_y + 20 >= 600:
+    if p_y + PLAYER_SIZE >= SCREEN_HEIGHT:
         is_landing = True
 
     # 自動的にジャンプする
