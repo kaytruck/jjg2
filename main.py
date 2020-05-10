@@ -13,6 +13,7 @@ def main():
     title_gametitle = font_1.render("Jump Jump Go !", True, (200, 200, 200))
     title_gameover = font_1.render("Game Over !", True, (200, 100, 100))
     title_prompt = font_2.render("Push SPACE to Start.", True, (200, 200, 200))
+    title_reset = font_2.render("Push SPACE to Reset.", True, (200, 200, 200))
 
     game_status = GameStatus.WAITING
     keycode = None
@@ -32,6 +33,7 @@ def main():
             screen.blit(title_gametitle, (50, 200))
             screen.blit(title_prompt, (50, 300))
             if keycode == K_SPACE:
+                pygame.key.set_repeat(5, 5) # キー繰り返し入力を有効にする
                 game_status = GameStatus.GAMING
         elif game_status == GameStatus.GAMING:
             # ゲーム中
@@ -41,7 +43,8 @@ def main():
         elif game_status == GameStatus.GAME_OVER:
             # ゲームオーバー
             screen.blit(title_gameover, (50, 200))
-            screen.blit(title_prompt, (50, 300))
+            screen.blit(title_reset, (50, 300))
+            pygame.key.set_repeat(0) # キー繰り返し入力を無効にする
             if keycode == K_SPACE:
                 game_status = GameStatus.WAITING
                 game_routine.__init__(screen) # 初期化し直す
@@ -53,7 +56,6 @@ def main():
 
 pygame.init()
 pygame.display.set_caption("Jump Jump Go !")
-pygame.key.set_repeat(5, 5)
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 fpsclock = pygame.time.Clock()
 
