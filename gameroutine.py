@@ -47,18 +47,23 @@ class GameRoutine:
             del self.floors[0]
         # 画面右端にブロックを追加する
         if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
-            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICENT
-            floor_height = random.randint(1, 7) * 20 # TODO 次の地面の高さは、前の高さを配慮する(極端に高いと登れないため)
-            new_floor = Rect((config.SCREEN_WIDTH, config.SCREEN_HEIGHT - floor_height),
-                (floor_length, config.FLOOR_HEIGHT))
+            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICIENT
+            if random.choice([True, False]):
+                # 新しいブロックは前のブロックよりも上
+                floor_height = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
+            else:
+                #新しいブロックは前のブロックよりも下
+                floor_height = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
+            new_floor = Rect((config.SCREEN_WIDTH, floor_height), (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
             self.gap_to_next = self.get_gap_to_next()
-        # 自機位置
+        # 自機位置の算出
         player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
 
         r1 = Rect(700, 450, 50, 100)     # TODO ジャンプ実験用ブロック
         r2 = Rect(50, 400, 50, 100)    # TODO 終了判定実験用ブロック
 
+        # 自機と地面の接触判定
         for f in self.floors:
             if player_char.colliderect(f):
                 self.is_landing = True
@@ -81,15 +86,17 @@ class GameRoutine:
         if (self.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
             return GameStatus.GAME_OVER
 
-        # 自動的にジャンプする
+        # ジャンプする
         if self.is_landing:
+            # 着地した場合はジャンプする
             self.is_landing = False
             self.jump_v = -30
         else:
+            # ジャンプ中は重力が働く
             self.jump_v += 2
         self.p_y += self.jump_v
 
         return GameStatus.GAMING
 
     def get_gap_to_next(self):
-        return random.randint(1, 4) * config.GAP_TO_NEXT_COEFFICIENT
+        return random.randint(1, 4) * config.GAP_X_TO_NEXT

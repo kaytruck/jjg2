@@ -10,5 +10,6 @@ SCROLL_STEP = 3     # 横スクロールの移動量
 FPS = 30            # FPS
 SCORE_INC_STEP = 10 # スコアの増分
 
-GAP_TO_NEXT_COEFFICIENT = 80    # 次の床を出現させる間隔の係数
-FLOOR_LENGTH_COEFFICENT = 90    # 次に出現させる床の長さの係数
+GAP_X_TO_NEXT = 80  # 次の床を出現させる間隔(X軸)の係数
+GAP_UP_Y_TO_NEXT = 100          # 次の床が前の床よりも高い場合の上限値
+FLOOR_LENGTH_COEFFICIENT = 90    # 次に出現させる床の長さの係数
