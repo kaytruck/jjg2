@@ -43,7 +43,6 @@ def main():
             if keycode == K_SPACE:
                 game_status = GameStatus.WAITING
                 game_routine.__init__(screen) # 初期化し直す
-                # init() # 初期化
 
         keycode = None
 

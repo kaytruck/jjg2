@@ -17,6 +17,11 @@ class GameRoutine:
         
         self.screen.fill((0, 0, 0))
 
+        # TODO 実験用の地面
+        self.floors = []
+        self.floors.append(Rect(0, config.SCREEN_HEIGHT - 20, 200, config.FLOOR_HEIGHT))
+        self.floors.append(Rect(300, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 450, config.FLOOR_HEIGHT))
+
     # ゲーム進行処理
     def step(self, keycode):
 
@@ -31,16 +36,16 @@ class GameRoutine:
         elif self.p_x >= config.SCREEN_WIDTH:
             self.p_x = config.SCREEN_WIDTH
 
+        # 地面をスクロールする
+        for f in self.floors:
+            f_x = f.left - config.SCROLL_STEP
+            f.left = f_x
+
         player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
         r1 = Rect(700, 450, 50, 100)     # TODO ジャンプ実験用ブロック
         r2 = Rect(50, 400, 50, 100)    # TODO 終了判定実験用ブロック
 
-        # TODO 実験用の地面
-        floors = []
-        floors.append(Rect(0, config.SCREEN_HEIGHT - 20, 200, config.FLOOR_HEIGHT))
-        floors.append(Rect(300, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 450, config.FLOOR_HEIGHT))
-
-        for f in floors:
+        for f in self.floors:
             if player_char.colliderect(f):
                 self.is_landing = True
                 self.p_y = f.top - config.PLAYER_SIZE
@@ -51,7 +56,7 @@ class GameRoutine:
         pygame.draw.rect(self.screen, (200, 0, 0), player_char)
         pygame.draw.rect(self.screen, (0, 100, 200), r1)
         pygame.draw.rect(self.screen, (100, 100, 200), r2)
-        for f in floors:
+        for f in self.floors:
             pygame.draw.rect(self.screen, (100, 200, 100), f)
 
         # TODO お邪魔ブロックとの衝突で終了判定実験
