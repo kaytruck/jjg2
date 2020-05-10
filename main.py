@@ -36,6 +36,8 @@ def main():
         elif game_status == GameStatus.GAMING:
             # ゲーム中
             game_status = game_routine.step(keycode)
+            title_score = font_2.render("SCORE: {}".format(game_routine.score), True, (50, 50, 200))
+            screen.blit(title_score, (50, 50))
         elif game_status == GameStatus.GAME_OVER:
             # ゲームオーバー
             screen.blit(title_gameover, (50, 200))

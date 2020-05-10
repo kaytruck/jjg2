@@ -16,14 +16,16 @@ class GameRoutine:
         self.is_landing = True
         self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
-        
         self.screen.fill((0, 0, 0))
+
+        self.score = 0
 
         self.floors = []
         self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 700, config.FLOOR_HEIGHT))
 
     # ゲーム進行処理
     def step(self, keycode):
+        self.score += config.SCORE_INC_STEP
 
         if keycode == K_LEFT:
             self.p_x -= config.MOVE_X_STEP
