@@ -80,12 +80,12 @@ class GameRoutine:
         if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
             if random.choice([True, False]):
                 # 新しいブロックは前のブロックよりも上
-                floor_y_top = max(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, 200)
+                floor_y_top = max(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, 230)
                 floor_y = random.randint(floor_y_top, self.floors[-1].top)
             else:
                 #新しいブロックは前のブロックよりも下
                 floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
-            floor_length = random.randint(90, 300)
+            floor_length = random.randint(90, 200)
             new_floor = Rect((config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
             self.gap_to_next = self.get_gap_to_next()
