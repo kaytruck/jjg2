@@ -67,7 +67,7 @@ class GameRoutine:
         return GameStatus.GAMING
 
     def get_gap_to_next(self):
-        return random.randint(1, 4) * config.GAP_X_TO_NEXT
+        return random.randint(60, 240)
     
     def scroll(self):
         # 地面をスクロールする
@@ -79,14 +79,14 @@ class GameRoutine:
             del self.floors[0]
         # 画面右端にブロックを追加する
         if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
-            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICIENT
             if random.choice([True, False]):
                 # 新しいブロックは前のブロックよりも上
-                floor_height = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
+                floor_y = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
             else:
                 #新しいブロックは前のブロックよりも下
-                floor_height = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
-            new_floor = Rect((config.SCREEN_WIDTH, floor_height), (floor_length, config.FLOOR_HEIGHT))
+                floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
+            floor_length = random.randint(90, 300)
+            new_floor = Rect((config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
             self.gap_to_next = self.get_gap_to_next()
 
