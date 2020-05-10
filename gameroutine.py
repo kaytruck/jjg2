@@ -63,7 +63,7 @@ class GameRoutine:
         for f in self.floors:
             pygame.draw.rect(self.screen, (100, 200, 100), f)
 
-        # 穴に落ちた判定
+        # 穴に落ちたらゲームオーバー
         if (self.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
             return GameStatus.GAME_OVER
 
@@ -76,7 +76,7 @@ class GameRoutine:
         """
         次に右端に出現するブロックとの間隔を調整する
         """
-        return random.randint(60, 240)
+        return random.randint(80, 240)
     
     def scroll(self):
         """
