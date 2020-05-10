@@ -52,6 +52,7 @@ def main():
         fpsclock.tick(config.FPS)
 
 pygame.init()
+pygame.display.set_caption("Jump Jump Go !")
 pygame.key.set_repeat(5, 5)
 screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 fpsclock = pygame.time.Clock()
