@@ -14,15 +14,13 @@ class GameRoutine:
         self.jump_v = 0
         self.is_jumping = False
         self.is_landing = True
-        self.gap_to_next = 100 # TODO ランダム化
+        self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
         
         self.screen.fill((0, 0, 0))
 
-        # TODO 実験用の地面
         self.floors = []
-        self.floors.append(Rect(0, config.SCREEN_HEIGHT - 20, 200, config.FLOOR_HEIGHT))
-        self.floors.append(Rect(300, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 450, config.FLOOR_HEIGHT))
+        self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 700, config.FLOOR_HEIGHT))
 
     # ゲーム進行処理
     def step(self, keycode):
@@ -52,9 +50,10 @@ class GameRoutine:
             new_floor = Rect((config.SCREEN_WIDTH, config.SCREEN_HEIGHT - floor_height),
                 (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
-            self.gap_to_next = random.randint(1, 4) * config.GAP_TO_NEXT_COEFFICIENT
-
+            self.gap_to_next = self.get_gap_to_next()
+        # 自機位置
         player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
+
         r1 = Rect(700, 450, 50, 100)     # TODO ジャンプ実験用ブロック
         r2 = Rect(50, 400, 50, 100)    # TODO 終了判定実験用ブロック
 
@@ -89,3 +88,6 @@ class GameRoutine:
         self.p_y += self.jump_v
 
         return GameStatus.GAMING
+
+    def get_gap_to_next(self):
+        return random.randint(1, 4) * config.GAP_TO_NEXT_COEFFICIENT

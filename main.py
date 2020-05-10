@@ -47,7 +47,7 @@ def main():
         keycode = None
 
         pygame.display.update()
-        fpsclock.tick(30)
+        fpsclock.tick(config.FPS)
 
 pygame.init()
 pygame.key.set_repeat(5, 5)
