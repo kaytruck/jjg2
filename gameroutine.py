@@ -38,30 +38,11 @@ class GameRoutine:
         elif self.p_x >= config.SCREEN_WIDTH:
             self.p_x = config.SCREEN_WIDTH
 
-        # 地面をスクロールする
-        for f in self.floors:
-            f_x = f.left - config.SCROLL_STEP
-            f.left = f_x
-        # 画面左端に達した地面を消す
-        if self.floors[0].right < 0:
-            del self.floors[0]
-        # 画面右端にブロックを追加する
-        if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
-            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICIENT
-            if random.choice([True, False]):
-                # 新しいブロックは前のブロックよりも上
-                floor_height = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
-            else:
-                #新しいブロックは前のブロックよりも下
-                floor_height = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
-            new_floor = Rect((config.SCREEN_WIDTH, floor_height), (floor_length, config.FLOOR_HEIGHT))
-            self.floors.append(new_floor)
-            self.gap_to_next = self.get_gap_to_next()
+        # スクロール
+        self.scroll()
+        
         # 自機位置の算出
         player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
-
-        r1 = Rect(700, 450, 50, 100)     # TODO ジャンプ実験用ブロック
-        r2 = Rect(50, 400, 50, 100)    # TODO 終了判定実験用ブロック
 
         # 自機と地面の接触判定
         for f in self.floors:
@@ -73,14 +54,8 @@ class GameRoutine:
         # 描画
         self.screen.fill((0, 0, 0))
         pygame.draw.rect(self.screen, (200, 0, 0), player_char)
-        pygame.draw.rect(self.screen, (0, 100, 200), r1)
-        pygame.draw.rect(self.screen, (100, 100, 200), r2)
         for f in self.floors:
             pygame.draw.rect(self.screen, (100, 200, 100), f)
-
-        # TODO お邪魔ブロックとの衝突で終了判定実験
-        if player_char.colliderect(r2):
-            return GameStatus.GAME_OVER
 
         # 穴に落ちた判定
         if (self.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
@@ -100,3 +75,24 @@ class GameRoutine:
 
     def get_gap_to_next(self):
         return random.randint(1, 4) * config.GAP_X_TO_NEXT
+    
+    def scroll(self):
+        # 地面をスクロールする
+        for f in self.floors:
+            f_x = f.left - config.SCROLL_STEP
+            f.left = f_x
+        # 画面左端に達した地面を消す
+        if self.floors[0].right < 0:
+            del self.floors[0]
+        # 画面右端にブロックを追加する
+        if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
+            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICIENT
+            if random.choice([True, False]):
+                # 新しいブロックは前のブロックよりも上
+                floor_height = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
+            else:
+                #新しいブロックは前のブロックよりも下
+                floor_height = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
+            new_floor = Rect((config.SCREEN_WIDTH, floor_height), (floor_length, config.FLOOR_HEIGHT))
+            self.floors.append(new_floor)
+            self.gap_to_next = self.get_gap_to_next()
