@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame.locals import Rect, K_LEFT, K_RIGHT
 
 import config
@@ -8,11 +9,12 @@ class GameRoutine:
 
     # ゲーム初期化処理
     def __init__(self, screen):
-        self.p_x = 400
+        self.p_x = config.SCREEN_WIDTH / 2
         self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.FLOOR_HEIGHT
         self.jump_v = 0
         self.is_jumping = False
         self.is_landing = True
+        self.gap_to_next = 100 # TODO ランダム化
         self.screen = screen
         
         self.screen.fill((0, 0, 0))
@@ -40,6 +42,17 @@ class GameRoutine:
         for f in self.floors:
             f_x = f.left - config.SCROLL_STEP
             f.left = f_x
+        # 画面左端に達した地面を消す
+        if self.floors[0].right < 0:
+            del self.floors[0]
+        # 画面右端にブロックを追加する
+        if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
+            floor_length = random.randint(1, 4) * config.FLOOR_LENGTH_COEFFICENT
+            floor_height = random.randint(1, 7) * 20 # TODO 次の地面の高さは、前の高さを配慮する(極端に高いと登れないため)
+            new_floor = Rect((config.SCREEN_WIDTH, config.SCREEN_HEIGHT - floor_height),
+                (floor_length, config.FLOOR_HEIGHT))
+            self.floors.append(new_floor)
+            self.gap_to_next = random.randint(1, 4) * config.GAP_TO_NEXT_COEFFICIENT
 
         player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
         r1 = Rect(700, 450, 50, 100)     # TODO ジャンプ実験用ブロック
