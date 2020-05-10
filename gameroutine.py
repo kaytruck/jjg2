@@ -50,9 +50,9 @@ class GameRoutine:
             self.p_y = r1.top - config.PLAYER_SIZE
             player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
             
-        pygame.draw.rect(screen, (200, 0, 0), player_char)
-        pygame.draw.rect(screen, (0, 100, 200), r1)
-        pygame.draw.rect(screen, (100, 100, 200), r2)
+        pygame.draw.rect(self.screen, (200, 0, 0), player_char)
+        pygame.draw.rect(self.screen, (0, 100, 200), r1)
+        pygame.draw.rect(self.screen, (100, 100, 200), r2)
         
         if player_char.colliderect(r2):
             return GameStatus.GAME_OVER
