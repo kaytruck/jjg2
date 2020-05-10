@@ -7,8 +7,10 @@ from gamestatus import GameStatus
 
 class GameRoutine:
 
-    # ゲーム初期化処理
     def __init__(self, screen):
+        """
+        ゲーム初期化処理
+        """
         self.p_x = config.SCREEN_WIDTH / 2
         self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.FLOOR_HEIGHT
         self.jump_v = 0
@@ -22,8 +24,10 @@ class GameRoutine:
         self.floors = []
         self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 700, config.FLOOR_HEIGHT))
 
-    # ゲーム進行処理
     def step(self, keycode):
+        """
+        ゲーム進行処理
+        """
         self.score += config.SCORE_INC_STEP
 
         if keycode == K_LEFT:
@@ -69,10 +73,16 @@ class GameRoutine:
         return GameStatus.GAMING
 
     def get_gap_to_next(self):
+        """
+        次に右端に出現するブロックとの間隔を調整する
+        """
         return random.randint(60, 240)
     
     def scroll(self):
-        # 地面をスクロールする
+        """
+        右から左へスクロールする
+        """
+        # スクロールする
         for f in self.floors:
             f_x = f.left - config.SCROLL_STEP
             f.left = f_x
@@ -93,8 +103,10 @@ class GameRoutine:
             self.floors.append(new_floor)
             self.gap_to_next = self.get_gap_to_next()
 
-    # ジャンプする
     def jump(self):
+        """
+        ジャンプする
+        """
         if self.is_landing:
             # 着地した場合はジャンプする
             self.is_landing = False
