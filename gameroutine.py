@@ -62,14 +62,7 @@ class GameRoutine:
             return GameStatus.GAME_OVER
 
         # ジャンプする
-        if self.is_landing:
-            # 着地した場合はジャンプする
-            self.is_landing = False
-            self.jump_v = -30
-        else:
-            # ジャンプ中は重力が働く
-            self.jump_v += 2
-        self.p_y += self.jump_v
+        self.jump()
 
         return GameStatus.GAMING
 
@@ -96,3 +89,14 @@ class GameRoutine:
             new_floor = Rect((config.SCREEN_WIDTH, floor_height), (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
             self.gap_to_next = self.get_gap_to_next()
+
+    # ジャンプする
+    def jump(self):
+        if self.is_landing:
+            # 着地した場合はジャンプする
+            self.is_landing = False
+            self.jump_v = -30
+        else:
+            # ジャンプ中は重力が働く
+            self.jump_v += 2
+        self.p_y += self.jump_v
