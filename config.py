@@ -10,4 +10,4 @@ SCROLL_STEP = 3     # 横スクロールの移動量
 FPS = 30            # FPS
 SCORE_INC_STEP = 10 # スコアの増分
 
-GAP_UP_Y_TO_NEXT = 200          # 次の床が前の床よりも高い場合の上限値
+GAP_UP_Y_TO_NEXT = 200          # 次の床が前の床よりも高い場合の差の上限値

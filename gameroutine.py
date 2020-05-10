@@ -12,7 +12,6 @@ class GameRoutine:
         self.p_x = config.SCREEN_WIDTH / 2
         self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.FLOOR_HEIGHT
         self.jump_v = 0
-        self.is_jumping = False
         self.is_landing = True
         self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
@@ -81,7 +80,8 @@ class GameRoutine:
         if (config.SCREEN_WIDTH - self.floors[-1].right) > self.gap_to_next:
             if random.choice([True, False]):
                 # 新しいブロックは前のブロックよりも上
-                floor_y = random.randint(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, self.floors[-1].top)
+                floor_y_top = max(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, 200)
+                floor_y = random.randint(floor_y_top, self.floors[-1].top)
             else:
                 #新しいブロックは前のブロックよりも下
                 floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
