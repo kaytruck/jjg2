@@ -27,9 +27,12 @@ class GameRoutine:
         self.score += config.SCORE_INC_STEP
 
         if keycode == K_LEFT:
-            self.p_x -= config.MOVE_X_STEP
+            self.p_x -= (config.MOVE_X_STEP + config.SCROLL_STEP)
         elif keycode == K_RIGHT:
             self.p_x += config.MOVE_X_STEP
+        elif keycode == None:
+            # キー未入力時は画面スクロールとともに自機も左へ流れる
+            self.p_x -= config.SCROLL_STEP
 
         # 横歩行の壁を超えない
         if self.p_x <= 0:
