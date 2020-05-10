@@ -8,3 +8,5 @@ Jump Action Game on Pygame
 ```
 python main.py
 ```
+# 操作
+カーソルキー右／左で操作してください。
