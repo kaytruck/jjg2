@@ -12,23 +12,28 @@ class GameRoutine:
         ゲーム初期化処理
         """
         self.p_x = config.SCREEN_WIDTH / 2
-        self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.FLOOR_HEIGHT
+        self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.START_FLOOR_HEIGHT
         self.jump_v = 0
         self.is_landing = True
         self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
-        self.screen.fill((0, 0, 0))
-
         self.score = 0
+        self.new_floor_level = 0
+        self.scroll_step = config.SCROLL_STEP
 
+        # 地面の配列を初期化し、スタート位置の地面を配置する
         self.floors = []
-        self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.FLOOR_HEIGHT, 700, config.FLOOR_HEIGHT))
+        self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.START_FLOOR_HEIGHT, 700, config.START_FLOOR_HEIGHT))
+
+        self.screen.fill((0, 0, 0))
 
     def step(self, keycode):
         """
         ゲーム進行処理
         """
         self.score += config.SCORE_INC_STEP
+        # レベルアップ
+        self.level_up()
 
         if keycode == K_LEFT:
             self.p_x -= (config.MOVE_X_STEP + config.SCROLL_STEP)
@@ -36,7 +41,7 @@ class GameRoutine:
             self.p_x += config.MOVE_X_STEP
         elif keycode == None:
             # キー未入力時は画面スクロールとともに自機も左へ流れる
-            self.p_x -= config.SCROLL_STEP
+            self.p_x -= self.scroll_step
 
         # 横歩行の壁を超えない
         if self.p_x <= 0:
@@ -84,7 +89,7 @@ class GameRoutine:
         """
         # スクロールする
         for f in self.floors:
-            f_x = f.left - config.SCROLL_STEP
+            f_x = f.left - self.scroll_step
             f.left = f_x
         # 画面左端に達した地面を消す
         if self.floors[0].right < 0:
@@ -98,10 +103,22 @@ class GameRoutine:
             else:
                 #新しいブロックは前のブロックよりも下
                 floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
-            floor_length = random.randint(90, 200)
+            floor_length = random.randint(90 - self.new_floor_level, 200 - self.new_floor_level)
             new_floor = Rect((config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT))
             self.floors.append(new_floor)
+            
+            # 新しい床の出現までランダムに間隔を空ける
             self.gap_to_next = self.get_gap_to_next()
+
+    def level_up(self):
+        """
+        スコアが上がるごとに難易度を上げる
+        """
+        if self.score % 10000 == 0 and self.scroll_step < 10:
+            self.scroll_step += 1
+
+        if self.score % 5000 == 0 and self.new_floor_level < 70:
+            self.new_floor_level += 5
 
     def jump(self):
         """
