@@ -1,12 +1,12 @@
 import pygame
 import random
-from pygame.locals import Rect, K_LEFT, K_RIGHT
+from pygame.locals import Rect, K_LEFT, K_RIGHT, K_SPACE
 
 import config
 from gamestatus import GameStatus
 
-class GameRoutine:
 
+class GameRoutine:
     def __init__(self, screen):
         """
         ゲーム初期化処理
@@ -14,7 +14,8 @@ class GameRoutine:
         self.p_x = config.SCREEN_WIDTH / 2
         self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.START_FLOOR_HEIGHT
         self.jump_v = 0
-        self.is_landing = True
+        self.is_going_jump = False
+        self.is_landing = False
         self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
         self.score = 0
@@ -23,11 +24,18 @@ class GameRoutine:
 
         # 地面の配列を初期化し、スタート位置の地面を配置する
         self.floors = []
-        self.floors.append(Rect(0, config.SCREEN_HEIGHT - config.START_FLOOR_HEIGHT, 700, config.START_FLOOR_HEIGHT))
+        self.floors.append(
+            Rect(
+                0,
+                config.SCREEN_HEIGHT - config.START_FLOOR_HEIGHT,
+                700,
+                config.START_FLOOR_HEIGHT,
+            )
+        )
 
         self.screen.fill((0, 0, 0))
 
-    def step(self, keycode):
+    def step(self, keys, space_pressed):
         """
         ゲーム進行処理
         """
@@ -35,11 +43,13 @@ class GameRoutine:
         # レベルアップ
         self.level_up()
 
-        if keycode == K_LEFT:
-            self.p_x -= (config.MOVE_X_STEP + config.SCROLL_STEP)
-        elif keycode == K_RIGHT:
+        if keys[K_LEFT]:
+            self.p_x -= config.MOVE_X_STEP + config.SCROLL_STEP
+        if keys[K_RIGHT]:
             self.p_x += config.MOVE_X_STEP
-        elif keycode == None:
+        if space_pressed and self.is_landing:
+            self.is_going_jump = True
+        if not (keys[K_LEFT] or keys[K_RIGHT]):
             # キー未入力時は画面スクロールとともに自機も左へ流れる
             self.p_x -= self.scroll_step
 
@@ -51,18 +61,31 @@ class GameRoutine:
 
         # スクロール
         self.scroll()
-        
-        # 自機位置の算出
-        player_char = Rect((self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
 
+        # ジャンプ、重力
+        self.jump_and_gravity()
+
+        # 接触判定のため、自機オブジェクトを仮で生成
+        player_char = Rect(
+            (self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE)
+        )
         # 自機と地面の接触判定
         for f in self.floors:
             if player_char.colliderect(f):
+                # print("地面と接触")
                 self.is_landing = True
+                self.is_going_jump = False
                 self.p_y = f.top - config.PLAYER_SIZE
-                player_char = Rect((self.p_x - config.PLAYER_SIZE / 2, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE))
-            
+                # 地面と接触した場合、自機位置の補正
+                player_char = Rect(
+                    (self.p_x - config.PLAYER_SIZE / 2, self.p_y),
+                    (config.PLAYER_SIZE, config.PLAYER_SIZE),
+                )
+
         # 描画
+        player_char = Rect(
+            (self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE)
+        )
         self.screen.fill((0, 0, 0))
         pygame.draw.rect(self.screen, (200, 0, 0), player_char)
         for f in self.floors:
@@ -72,9 +95,6 @@ class GameRoutine:
         if (self.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
             return GameStatus.GAME_OVER
 
-        # ジャンプする
-        self.jump()
-
         return GameStatus.GAMING
 
     def get_gap_to_next(self):
@@ -82,7 +102,7 @@ class GameRoutine:
         次に右端に出現するブロックとの間隔を調整する
         """
         return random.randint(80, 240)
-    
+
     def scroll(self):
         """
         右から左へスクロールする
@@ -101,12 +121,16 @@ class GameRoutine:
                 floor_y_top = max(self.floors[-1].top - config.GAP_UP_Y_TO_NEXT, 230)
                 floor_y = random.randint(floor_y_top, self.floors[-1].top)
             else:
-                #新しいブロックは前のブロックよりも下
-                floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 20)
-            floor_length = random.randint(90 - self.new_floor_level, 200 - self.new_floor_level)
-            new_floor = Rect((config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT))
+                # 新しいブロックは前のブロックよりも下
+                floor_y = random.randint(self.floors[-1].top, config.SCREEN_HEIGHT - 30)
+            floor_length = random.randint(
+                90 - self.new_floor_level, 200 - self.new_floor_level
+            )
+            new_floor = Rect(
+                (config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT)
+            )
             self.floors.append(new_floor)
-            
+
             # 新しい床の出現までランダムに間隔を空ける
             self.gap_to_next = self.get_gap_to_next()
 
@@ -120,15 +144,22 @@ class GameRoutine:
         if self.score % 5000 == 0 and self.new_floor_level < 70:
             self.new_floor_level += 5
 
-    def jump(self):
+    def jump_and_gravity(self):
         """
         ジャンプする
         """
-        if self.is_landing:
-            # 着地した場合はジャンプする
+        if self.is_going_jump:
+            # 着地している場合はジャンプする
             self.is_landing = False
+            self.is_going_jump = False
             self.jump_v = -30
-        else:
-            # ジャンプ中は重力が働く
-            self.jump_v += 2
+
+        # 重力加速度
+        self.jump_v += 2
+
+        # 重力加速度の最大値を制限する
+        if self.jump_v >= config.GRAVITY_V_MAX:
+            self.jump_v = config.GRAVITY_V_MAX
+
+        # 重力加速度の反映
         self.p_y += self.jump_v
