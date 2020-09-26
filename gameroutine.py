@@ -3,6 +3,7 @@ import random
 from pygame.locals import Rect, K_LEFT, K_RIGHT, K_SPACE
 
 import config
+from player import Player
 from gamestatus import GameStatus
 
 
@@ -11,11 +12,7 @@ class GameRoutine:
         """
         ゲーム初期化処理
         """
-        self.p_x = config.SCREEN_WIDTH / 2
-        self.p_y = config.SCREEN_HEIGHT - config.PLAYER_SIZE - config.START_FLOOR_HEIGHT
-        self.jump_v = 0
-        self.is_going_jump = False
-        self.is_landing = False
+        self.player = Player()
         self.gap_to_next = self.get_gap_to_next()
         self.screen = screen
         self.score = 0
@@ -44,20 +41,20 @@ class GameRoutine:
         self.level_up()
 
         if keys[K_LEFT]:
-            self.p_x -= config.MOVE_X_STEP + config.SCROLL_STEP
+            self.player.p_x -= config.MOVE_X_STEP + config.SCROLL_STEP
         if keys[K_RIGHT]:
-            self.p_x += config.MOVE_X_STEP
-        if space_pressed and self.is_landing:
-            self.is_going_jump = True
+            self.player.p_x += config.MOVE_X_STEP
+        if space_pressed and self.player.is_landing:
+            self.player.is_going_jump = True
         if not (keys[K_LEFT] or keys[K_RIGHT]):
             # キー未入力時は画面スクロールとともに自機も左へ流れる
-            self.p_x -= self.scroll_step
+            self.player.p_x -= self.scroll_step
 
         # 横歩行の壁を超えない
-        if self.p_x <= 0:
-            self.p_x = 0
-        elif self.p_x >= config.SCREEN_WIDTH:
-            self.p_x = config.SCREEN_WIDTH
+        if self.player.p_x <= 0:
+            self.player.p_x = 0
+        elif self.player.p_x >= config.SCREEN_WIDTH:
+            self.player.p_x = config.SCREEN_WIDTH
 
         # スクロール
         self.scroll()
@@ -67,24 +64,26 @@ class GameRoutine:
 
         # 接触判定のため、自機オブジェクトを仮で生成
         player_char = Rect(
-            (self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE)
+            (self.player.p_x - 10, self.player.p_y),
+            (config.PLAYER_SIZE, config.PLAYER_SIZE),
         )
         # 自機と地面の接触判定
         for f in self.floors:
             if player_char.colliderect(f):
                 # print("地面と接触")
-                self.is_landing = True
-                self.is_going_jump = False
-                self.p_y = f.top - config.PLAYER_SIZE
+                self.player.is_landing = True
+                self.player.is_going_jump = False
+                self.player.p_y = f.top - config.PLAYER_SIZE
                 # 地面と接触した場合、自機位置の補正
                 player_char = Rect(
-                    (self.p_x - config.PLAYER_SIZE / 2, self.p_y),
+                    (self.player.p_x - config.PLAYER_SIZE / 2, self.player.p_y),
                     (config.PLAYER_SIZE, config.PLAYER_SIZE),
                 )
 
         # 描画
         player_char = Rect(
-            (self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE)
+            (self.player.p_x - 10, self.player.p_y),
+            (config.PLAYER_SIZE, config.PLAYER_SIZE),
         )
         self.screen.fill((0, 0, 0))
         pygame.draw.rect(self.screen, (200, 0, 0), player_char)
@@ -92,7 +91,7 @@ class GameRoutine:
             pygame.draw.rect(self.screen, (100, 200, 100), f)
 
         # 穴に落ちたらゲームオーバー
-        if (self.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
+        if (self.player.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
             return GameStatus.GAME_OVER
 
         return GameStatus.GAMING
@@ -148,18 +147,18 @@ class GameRoutine:
         """
         ジャンプする
         """
-        if self.is_going_jump:
+        if self.player.is_going_jump:
             # 着地している場合はジャンプする
-            self.is_landing = False
-            self.is_going_jump = False
-            self.jump_v = -30
+            self.player.is_landing = False
+            self.player.is_going_jump = False
+            self.player.jump_v = -30
 
         # 重力加速度
-        self.jump_v += 2
+        self.player.jump_v += 2
 
         # 重力加速度の最大値を制限する
-        if self.jump_v >= config.GRAVITY_V_MAX:
-            self.jump_v = config.GRAVITY_V_MAX
+        if self.player.jump_v >= config.GRAVITY_V_MAX:
+            self.player.jump_v = config.GRAVITY_V_MAX
 
         # 重力加速度の反映
-        self.p_y += self.jump_v
+        self.player.p_y += self.player.jump_v

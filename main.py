@@ -1,6 +1,6 @@
 import sys
 import pygame
-from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE
+from pygame.locals import QUIT, KEYDOWN, K_SPACE
 
 from gamestatus import GameStatus
 import config
