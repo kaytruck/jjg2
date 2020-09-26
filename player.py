@@ -1,3 +1,4 @@
+from pygame import Rect
 import config
 
 
@@ -8,3 +9,8 @@ class Player:
         self.jump_v = 0
         self.is_going_jump = False
         self.is_landing = False
+
+    def rect(self):
+        return Rect(
+            (self.p_x - 10, self.p_y), (config.PLAYER_SIZE, config.PLAYER_SIZE),
+        )

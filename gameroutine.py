@@ -1,3 +1,4 @@
+from floor import Floor
 import pygame
 import random
 from pygame.locals import Rect, K_LEFT, K_RIGHT, K_SPACE
@@ -22,7 +23,7 @@ class GameRoutine:
         # 地面の配列を初期化し、スタート位置の地面を配置する
         self.floors = []
         self.floors.append(
-            Rect(
+            Floor(
                 0,
                 config.SCREEN_HEIGHT - config.START_FLOOR_HEIGHT,
                 700,
@@ -40,6 +41,7 @@ class GameRoutine:
         # レベルアップ
         self.level_up()
 
+        # 操作受付
         if keys[K_LEFT]:
             self.player.p_x -= config.MOVE_X_STEP + config.SCROLL_STEP
         if keys[K_RIGHT]:
@@ -69,7 +71,7 @@ class GameRoutine:
         )
         # 自機と地面の接触判定
         for f in self.floors:
-            if player_char.colliderect(f):
+            if player_char.colliderect(f.rect):
                 # print("地面と接触")
                 self.player.is_landing = True
                 self.player.is_going_jump = False
@@ -86,9 +88,9 @@ class GameRoutine:
             (config.PLAYER_SIZE, config.PLAYER_SIZE),
         )
         self.screen.fill((0, 0, 0))
-        pygame.draw.rect(self.screen, (200, 0, 0), player_char)
+        pygame.draw.rect(self.screen, config.PLAYER_COLOR, player_char)
         for f in self.floors:
-            pygame.draw.rect(self.screen, (100, 200, 100), f)
+            pygame.draw.rect(self.screen, config.FLOOR_COLOR, f)
 
         # 穴に落ちたらゲームオーバー
         if (self.player.p_y + config.PLAYER_SIZE) >= config.SCREEN_HEIGHT:
@@ -104,7 +106,7 @@ class GameRoutine:
 
     def scroll(self):
         """
-        右から左へスクロールする
+        地面を右から左へスクロールする
         """
         # スクロールする
         for f in self.floors:
@@ -125,8 +127,8 @@ class GameRoutine:
             floor_length = random.randint(
                 90 - self.new_floor_level, 200 - self.new_floor_level
             )
-            new_floor = Rect(
-                (config.SCREEN_WIDTH, floor_y), (floor_length, config.FLOOR_HEIGHT)
+            new_floor = Floor(
+                config.SCREEN_WIDTH, floor_y, floor_length, config.FLOOR_HEIGHT
             )
             self.floors.append(new_floor)
 

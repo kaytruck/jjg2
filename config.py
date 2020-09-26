@@ -9,6 +9,9 @@ MOVE_X_STEP = 10  # 横方向のステップ
 GRAVITY_V_MAX = 25  # 重力加速度の最大値
 
 PLAYER_SIZE = 20  # プレイヤーキャラの大きさ
+PLAYER_COLOR = (110, 240, 180)  # プレイヤーキャラの色
+
+FLOOR_COLOR = (100, 200, 100)  # 地面の色
 
 SCORE_INC_STEP = 10  # スコアの増分
 
