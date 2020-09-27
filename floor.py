@@ -1,9 +1,17 @@
 from pygame import Rect
+import pygame
+import config
 
 
 class Floor:
     def __init__(self, x1, y1, x2, y2):
         self.__floor = Rect(x1, y1, x2, y2)
+
+    def draw(self, screen):
+        """
+        地面を描画する
+        """
+        pygame.draw.rect(screen, config.FLOOR_COLOR, self.__floor)
 
     def get_left(self):
         return self.__floor.left

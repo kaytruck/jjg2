@@ -1,17 +1,18 @@
 """
 ゲーム定数
 """
+WINDOW_CAPTION = "Jump Jump Go 2 !"  # ウィンドウのタイトル
 SCREEN_WIDTH = 800  # 画面の横幅
 SCREEN_HEIGHT = 600  # 画面の高さ
-WINDOW_CAPTION = "Jump Jump Go 2 !"  # ウィンドウのタイトル
+SCREEN_COLOR = (204, 204, 255)  # 背景色
 
 MOVE_X_STEP = 10  # 横方向のステップ
 GRAVITY_V_MAX = 25  # 重力加速度の最大値
 
 PLAYER_SIZE = 20  # プレイヤーキャラの大きさ
-PLAYER_COLOR = (110, 240, 180)  # プレイヤーキャラの色
+PLAYER_COLOR = (255, 101, 255)  # プレイヤーキャラの色
 
-FLOOR_COLOR = (100, 200, 100)  # 地面の色
+FLOOR_COLOR = (219, 127, 35)  # 地面の色
 
 SCORE_INC_STEP = 10  # スコアの増分
 

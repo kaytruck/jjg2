@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import QUIT, KEYDOWN, K_SPACE
 
 from gamestatus import GameStatus
-import config
+import config as conf
 import gameroutine
 
 
@@ -11,10 +11,10 @@ def main():
     font_1 = pygame.font.SysFont(None, 72)
     font_2 = pygame.font.SysFont(None, 36)
 
-    title_gametitle = font_1.render("Jump Jump Go 2 !", True, (200, 200, 200))
+    title_gametitle = font_1.render("Jump Jump Go 2 !", True, (200, 100, 100))
     title_gameover = font_1.render("Game Over !", True, (200, 100, 100))
-    title_prompt = font_2.render("Push SPACE to Start.", True, (200, 200, 200))
-    title_reset = font_2.render("Push SPACE to Reset.", True, (200, 200, 200))
+    title_prompt = font_2.render("Push SPACE to Start.", True, (255, 50, 50))
+    title_reset = font_2.render("Push SPACE to Restart.", True, (255, 50, 50))
 
     game_status = GameStatus.WAITING
 
@@ -53,12 +53,12 @@ def main():
                 game_routine.__init__(screen)  # 初期化し直す
 
         pygame.display.update()
-        fpsclock.tick(config.FPS)
+        fpsclock.tick(conf.FPS)
 
 
 pygame.init()
-pygame.display.set_caption(config.WINDOW_CAPTION)
-screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
+pygame.display.set_caption(conf.WINDOW_CAPTION)
+screen = pygame.display.set_mode((conf.SCREEN_WIDTH, conf.SCREEN_HEIGHT))
 fpsclock = pygame.time.Clock()
 
 if __name__ == "__main__":
